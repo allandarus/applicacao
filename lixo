@@ -1,0 +1,7 @@
+<link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="../static/css/bootstrap.css">
+
+../static/css/bootstrap.css
+
+config = app_config[app_active]
