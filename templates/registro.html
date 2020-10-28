@@ -15,10 +15,14 @@
 {% endblock %}
 {% block content %}
 <h1 class="mt-4">Formulário de Registro</h1>
-    <form>
+    <form action="{{ url_for('save_documents')}}" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="form-group">
+            <label for="numregFormControlSelect">Número de Registro</label>
+            <input type="text" class="form-control w-25" name="num_reg" id="numregFormControlSelect" value="002/2020">
+        </div>
         <div class="form-group">
             <label for="tipoFormControlSelect">Tipo</label>
-            <select class="form-control w-25 form-control-sm" style="min-width:100px;" id="tipoFormControlSelect">
+            <select class="form-control w-25 form-control-sm" name="type" style="min-width:100px;" id="tipoFormControlSelect">
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -28,7 +32,7 @@
         </div>
         <div class="form-group">
             <label for="solicitanteFormControlSelect">Solicitante</label>
-            <select class="form-control w-50" id="solicitanteFormControlSelect">
+            <select class="form-control w-50" name="requester" id="solicitanteFormControlSelect">
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -38,11 +42,11 @@
         </div>
         <div class="form-group">
             <label for="objetoFormControlTextarea">Objeto</label>
-            <textarea class="form-control w-50" id="objetoFormControlTextarea" rows="2"></textarea>
+            <textarea class="form-control w-50" name="objeto" id="objetoFormControlTextarea" rows="2"></textarea>
         </div>
         <div class="form-group">
             <label for="origemFormControlSelect">Origem</label>
-            <select class="form-control w-50" id="origemFormControlSelect">
+            <select class="form-control w-50" name="origen" id="origemFormControlSelect">
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -52,7 +56,7 @@
         </div>
         <div class="form-group">
             <label for="destinoFormControlSelect">Destino</label>
-            <select class="form-control w-50" id="destinoFormControlSelect">
+            <select class="form-control w-50" name="destiny" id="destinoFormControlSelect">
             <option>1</option>
             <option>2</option>
             <option>3</option>
@@ -60,12 +64,18 @@
             <option>5</option>
             </select>
         </div>
+        <div class="form-group">
+            <label for="datecFormControlSelect">Data de Criação</label>
+            <input type="text" class="form-control w-50" name="num_reg" id="datecFormControlSelect" value="2020-10-11 02:25:00">
+        </div>
+        <script type="text/javascript">
+             $(function () {
+                 $('#datetimepicker1').datetimepicker();
+             });
+        </script>
     </form>
     <div class="col-lg-12" style="text-align: right;">
         <button type="button" class="btn btn-danger mr-auto apagar">Apagar</button>
-        <button type="button" class="btn btn-success mr-auto salvar">Salvar</button>
-    <p>The top navbar is optional, and just for demonstration. Just create an element with the
-            <code>
-                #menu-toggle
-            </code> ID which will toggle the menu when clicked.
+        <button type="submit" class="btn btn-success mr-auto salvar">Salvar</button>
+    </div>
 {% endblock %}

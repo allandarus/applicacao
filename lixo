@@ -5,3 +5,35 @@
 ../static/css/bootstrap.css
 
 config = app_config[app_active]
+
+@app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Conten-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS')
+        return response
+
+    def auth_token_required(f):
+        @wraps(f)
+        def verify_token(*args, **kwargs):
+            user = UserController()
+            try:
+                result = user.verify_auth_token(request.headers['access_token'])
+                if result['status'] == 200:
+                    return f(*args, **kwargs)
+                else:
+                    abort(result['status'], result['message'])
+            except KeyError as e:
+                abort(401, 'Você precisa enviar um token de acesso')
+        return verify_token
+
+
+class FormCadastro(FlaskForm):
+    num_reg = StringField('Número de Registro')
+    tipo_reg = SelectFieldBase('Tipo de Documento')
+    objeto = TextAreaField('Objeto')
+    origem = SelectFieldBase('Origem')
+    destino = SelectFieldBase('Destino')
+    date_criacao = DateTimeField('Data de Criação')
+    solicitante = SelectFieldBase('Solicitante')
+    criador = StringField('Criado por:')

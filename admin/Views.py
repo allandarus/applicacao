@@ -32,15 +32,6 @@ class HomeView(AdminIndexView):
             'documents': 0 if not documents else documents[0]
         }, last_documents=last_documents)
 
-    def is_accessible(self):
-        return current_user.is_authenticated
-
-    def inaccessible_callback(self, name, **kwargs):
-        if current_user.is_authenticated:
-            return redirect('/admin')
-        else:
-            return redirect('/login')
-
 
 class UserView(ModelView):
     column_labels = {'funcao': 'Função',
@@ -93,21 +84,6 @@ class UserView(ModelView):
             else:
                 del form.password
 
-    def is_accessible(self):
-        if current_user.is_authenticated:
-            cargo = current_user.cargo
-            if cargo == 1:
-                self.can_create = True
-                self.can_edit = True
-                self.can.edit = True
-                return current_user.is_authenticated
-
-    def inaccessible_callback(self, name, **kwargs):
-        if current_user.is_authenticated:
-            return redirect('/admin')
-        else:
-            return redirect('/login')
-
 
 class DocumentsView(ModelView):
     column_labels = {
@@ -142,30 +118,6 @@ class DocumentsView(ModelView):
     column_default_sort = ('date_created', False)
     export_types = ['json', 'yaml', 'csv', 'xls', 'df']
 
-    def is_accessible(self):
-        if current_user.is_authenticated:
-            cargo = current_user.cargo
-            if cargo == 1:
-                self.can_create = True
-                self.can_edit = True
-                self.can.edit = True
-            elif cargo == 2:
-                self.can_create = True
-                self.can_edit = True
-                self.can_delete = True
-            elif cargo == 3:
-                self.can_create = True
-                self.can_edit = True
-                self.can_delete = False
-
-            return current_user.is_authenticated
-
-    def inaccessible_callback(self, name, **kwargs):
-        if current_user.is_authenticated:
-            return redirect('/admin')
-        else:
-            return redirect('/login')
-
 
 class CargoView(ModelView):
     column_labels = {
@@ -179,21 +131,6 @@ class CargoView(ModelView):
     }
     create_modal = True
     edit_modal = True
-
-    def is_accessible(self):
-        if current_user.is_authenticated:
-            cargo = current_user.cargo
-            if cargo == 1:
-                self.can_create = True
-                self.can_edit = True
-                self.can.edit = True
-                return current_user.is_authenticated
-
-    def inaccessible_callback(self, name, **kwargs):
-        if current_user.is_authenticated:
-            return redirect('/admin')
-        else:
-            return redirect('/login')
 
 
 class DepartmentView(ModelView):
@@ -209,15 +146,6 @@ class DepartmentView(ModelView):
     create_modal = True
     edit_modal = True
 
-    def is_accessible(self):
-        return current_user.is_authenticated
-
-    def inaccessible_callback(self, name, **kwargs):
-        if current_user.is_authenticated:
-            return redirect('/admin')
-        else:
-            return redirect('/login')
-
 
 class TyperegView(ModelView):
     column_labels = {
@@ -232,23 +160,3 @@ class TyperegView(ModelView):
     create_modal = True
     edit_modal = True
     can_view_details = True
-
-    def is_accessible(self):
-        if current_user.is_authenticated:
-            cargo = current_user.cargo
-            if cargo == 1:
-                self.can_create = True
-                self.can_edit = True
-                self.can.edit = True
-                return current_user.is_authenticated
-            elif cargo == 2:
-                self.can_create = True
-                self.can_edit = True
-                self.can_delete = True
-            return current_user.is_authenticated
-
-    def inaccessible_callback(self, name, **kwargs):
-        if current_user.is_authenticated:
-            return redirect('/admin')
-        else:
-            return redirect('/login')

@@ -1,5 +1,6 @@
 import os
-import random, string
+import random
+import string
 
 
 class Config(object):

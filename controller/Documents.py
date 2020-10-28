@@ -8,6 +8,7 @@ class DocumentController:
         self.document_model = Documents()
 
     def save_document(self, obj):
+        self.document_model.num_reg = obj['num_reg']
         self.document_model.objeto = obj['objeto']
         self.document_model.origen = obj['origen']
         self.document_model.destiny = obj['destiny']
@@ -25,7 +26,7 @@ class DocumentController:
     def get_documents(self, limit):
         result = []
         try:
-            res = self.document_model.get_all(limit==limit)
+            res = self.document_model.get_all(limit == limit)
 
             for r in res:
                 result.append({

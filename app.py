@@ -4,8 +4,10 @@ from config import app_config, app_active
 from controller.User import UserController
 from admin.Admin import start_views
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
 from functools import wraps
 from controller.Documents import DocumentController
+from static.cadastro import FormCadastro
 from flask_bootstrap import Bootstrap
 
 config = app_config[app_active]
@@ -27,27 +29,6 @@ def create_app(config_name):
     start_views(app, db)
     Bootstrap(app)
     db.init_app(app)
-
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Conten-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS')
-        return response
-
-    def auth_token_required(f):
-        @wraps(f)
-        def verify_token(*args, **kwargs):
-            user = UserController()
-            try:
-                result = user.verify_auth_token(request.headers['access_token'])
-                if result['status'] == 200:
-                    return f(*args, **kwargs)
-                else:
-                    abort(result['status'], result['message'])
-            except KeyError as e:
-                abort(401, 'Você precisa enviar um token de acesso')
-        return verify_token
 
     @app.route("/")
     def index():
@@ -93,16 +74,28 @@ def create_app(config_name):
         else:
             return render_template('recovery.hmtl', data={'status': 401, 'msg': 'Erro ao enviar e-mail de confirmação'})
 
-    @app.route('/documents', methods=['POST'])
+    @app.route('/cadastro/', methods=['GET', 'POST'])
+    def cadastro_salvar():
+        form = FormCadastro(request.form)
+        if request.method == 'POST' and form.validate():
+            return 'OK'
+
+        return render_template('cadastro.html', form=form)
+
+    @app.route('/registro/')
+    def registro():
+        return render_template('registro.html')
+
+    @app.route('/registro', methods=['POST', 'GET'])
     def save_documents():
         document = DocumentController
 
         result = document.save_document(request.form)
 
         if result:
-            message = "Inserido"
+            message = 'Editado'
         else:
-            message = "Não inserido"
+            message = "Não editado"
         return message
 
     @app.route('/documents', methods=['PUT'])
@@ -117,13 +110,8 @@ def create_app(config_name):
             message = "Não editado"
         return message
 
-    @app.route('/registro/')
-    def registro():
-        return render_template('registro.html')
-
     @app.route('/documents/', methods=['GET'])
     @app.route('/documents/<limit>', methods=['GET'])
-    @auth_token_required
     def get_documents(limit=None):
         header = {
             'access_token': request.headers['access_token'],
@@ -137,7 +125,6 @@ def create_app(config_name):
                                    ensure_ascii=False), mimetype='application/json'), response['status'], header
 
     @app.route('/documents/<documents_id>', methods=['GET'])
-    @auth_token_required
     def get_document(documents_id):
         header = {
             'access_token': request.headers['access_token'],
@@ -151,7 +138,6 @@ def create_app(config_name):
                                    ensure_ascii=False), mimetype='application/json'), response['status'], header
 
     @app.route('/user/<user_id>', methods=['GET'])
-    @auth_token_required
     def get_user_profile(user_id):
         header = {
             'access_token': request.headers['access_token'],

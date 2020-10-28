@@ -22,16 +22,13 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"> 
+      <div class="sidebar-heading">
         <img src="../static/images/fesf10.png" alt="Fesf 10 anos">
       </div>
       <div class="list-group list-group-flush">
         <a href="/registro" class="list-group-item list-group-item-action bg-light">Registro</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Pesquisa</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Configurações</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Events</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Profile</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Status</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -40,8 +37,6 @@
     <div id="page-content-wrapper">
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-success" id="menu-toggle">Maximizar</button>
-
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -80,6 +75,7 @@
         {% endblock %}
       </div>
     </div>
+  </div>
     <!-- /#page-content-wrapper -->
 
   <!-- /#wrapper -->
@@ -89,12 +85,6 @@
   <script src="../static/js/bootstrap.bundle.js"></script>
 
   <!-- Menu Toggle Script -->
-  <script>
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });
-  </script>
 </body>
 
 </html>
