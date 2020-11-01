@@ -136,13 +136,16 @@ class CargoView(ModelView):
 class DepartmentView(ModelView):
     column_labels = {
         'name': 'Nome do setor',
+        'tipo': 'Tipo de Destino',
         'description': 'Descrição do setor'
     }
 
     column_descriptions = {
+        'tipo': 'Escolha 1 para setores FESF, 2 para Externo privados e 3 para Externos governos',
         'description': 'Preencher no formato: "Diretoria-Nome completo do setor"'
     }
 
+    column_editable_list = ['name', 'tipo', 'description']
     create_modal = True
     edit_modal = True
 

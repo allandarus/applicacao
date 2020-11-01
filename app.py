@@ -7,6 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from functools import wraps
 from controller.Documents import DocumentController
+from model.Department import Department
+from wtforms_sqlalchemy.fields import QuerySelectField
+from model.Types_reg import TypesReg
 from static.cadastro import FormCadastro
 from flask_bootstrap import Bootstrap
 
@@ -76,11 +79,17 @@ def create_app(config_name):
 
     @app.route('/cadastro/', methods=['GET', 'POST'])
     def cadastro_salvar():
-        form = FormCadastro(request.form)
+        form = FormCadastro()
+
         if request.method == 'POST' and form.validate():
             return 'OK'
 
         return render_template('cadastro.html', form=form)
+
+    @app.route('/destino/<get_destino>')
+    def destino_opcoes(get_destino):
+        if FormCadastro.tipo_destino == 'Interno':
+            dest = Department.query.filter_by(tipo_destino_id=get_destino)
 
     @app.route('/registro/')
     def registro():
@@ -113,10 +122,7 @@ def create_app(config_name):
     @app.route('/documents/', methods=['GET'])
     @app.route('/documents/<limit>', methods=['GET'])
     def get_documents(limit=None):
-        header = {
-            'access_token': request.headers['access_token'],
-            'token_type': 'jwt'
-        }
+        header = {}
 
         documents = DocumentController()
         response = documents.get_documents(limit=limit)
@@ -126,10 +132,7 @@ def create_app(config_name):
 
     @app.route('/documents/<documents_id>', methods=['GET'])
     def get_document(documents_id):
-        header = {
-            'access_token': request.headers['access_token'],
-            'token_type': 'jwt'
-        }
+        header = {}
 
         documents = DocumentController()
         response = documents.get_documents_by_id(documents_id=documents_id)

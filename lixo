@@ -37,3 +37,48 @@ class FormCadastro(FlaskForm):
     date_criacao = DateTimeField('Data de Criação')
     solicitante = SelectFieldBase('Solicitante')
     criador = StringField('Criado por:')
+
+{{ wtf.quick_form(form) }}
+
+  <div class="form-row">
+          <div class="form-group col-md-12">
+            {{ wtf.form_field(form.num_reg) }}
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ wtf.form_field(form.tipo_reg) }}
+          </div>
+          <div class="form-group col-md-6">
+            {{ wtf.form_field(form.solicitante) }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ wtf.form_field(form.origem) }}
+          </div>
+          <div class="form-group col-md-6">
+            {{ wtf.form_field(form.destino) }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            {{ wtf.form_field(form.objeto) }}
+          </div>
+        </div>
+          </div>
+
+        </div>
+
+   <div class="form-check-inline row">
+            {{ form.tipo_destino.label(class="col-form-label col-md-6 pt-0") }}
+            {% for subfield in form.tipo_destino %}
+                <tr>
+                    <td>{{ subfield(class="col-auto mb-3") }}</td>
+                    <td>{{ subfield.label(class="col-form-label col-md-2 mb-3") }}</td>
+                </tr>
+            {% endfor %}
+
+  <div class="form-group row">
+            <p>
+              {{ form.destino.label(class="col-form-label col-md-2") }}</p>
+              {{ form.destino(class="form-control col-md-10 mb-3") }}
+          </div>

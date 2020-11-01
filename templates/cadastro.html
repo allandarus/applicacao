@@ -1,10 +1,14 @@
 <!doctype html>
-<html lang="en">
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="UTF-8"/>
     <title>Document</title>
   </head>
   <body>
+  {% block content %}
     {% if form.errors %}
     <ul>
       {% for field_name, field_erros in form.errors|dictsort if field_erros%}
@@ -14,11 +18,74 @@
       {% endfor %}
     </ul>
     {% endif %}
-    <form method="POST">
-      {{ form.csrf_token }}
-      {% for field in form %}
-      {{ field.label }}: {{field(class='batatinha') }} <br/>
-      {% endfor %}
-    </form>
+  <br><br>
+    <div class="container">
+      <h1 class="text-center">Formulário de registro de documentos FESF</h1>
+      <br>
+      <br>
+      <br>
+      <form class="form form-horizontal" method="POST" role="form" action="/">
+        {{ form.csrf_token }}
+
+          <div class="row justify-content-start">
+            {{ form.num_reg.label(class="col-md-4 mb-3 col-form-label") }}
+            {{ form.num_reg(class="form-control-plaintext col-md-2 mb-3", type='text') }}
+          </div>
+        <div class="row justify-content-start">
+          <div class="form-group row">
+            {{ form.tipo_reg.label(class="col-md-4 mb-3 col-form-label") }}
+            {{ form.tipo_reg(class="form-control col-md-8 mb-3") }}
+          </div>
+          <div class="form-group row">
+            {{ form.solicitante.label(class="col-md-4 mb-3col-form-label") }}
+            {{ form.solicitante(class="form-control col-md-8 mb-3") }}
+          </div>
+        </div>
+        <div class="row justify-content-start">
+          <div class="form-group row">
+            {{ form.origem.label(class="col-md-4 mb-3 col-form-label") }}
+            {{ form.origem(class="form-control col-md-8 mb-3") }}
+          </div>
+          <div class="form-group row">
+
+          </div>
+        </div>
+        <div class="row justify-content-start">
+          <div class="form-group row align-items-center">
+            {{ form.tipo_destino.label(class="col-md-4 mb-3 col-form-label") }}
+            {% for subfield in form.tipo_destino %}
+                <tr>
+                    <td>{{ subfield(class="form-check-inline col-auto mb-3") }}</td>
+                    <td>{{ subfield.label(class="col-form-label col-auto mb-3") }}</td>
+                </tr>
+            {% endfor %}
+          </div>
+          <div class="form-group row">
+            {{ form.destino.label(class="col-md-4 mb-3 col-form-label") }}
+            {{ form.destino(class="form-control col-md-8 mb-3") }}
+          </div>
+        </div>
+        <div class="row justify-content-start">
+          {{ form.objeto.label(class="col-md-2 mb-2 col-form-label") }}
+          {{ form.objeto(class="form-control col-md mb-8", type="text") }}
+        </div>
+        <br>
+        <div class="row justify-content-end">
+          <p>
+          <input type="reset" class="reset btn btn-outline-danger" value="Apagar">
+            &nbsp;
+          {{ form.botao1(class="btn btn-primary") }}
+          </p>
+        </div>
+
+      </form>
+
+    </div>
+  <script>
+    tipo_dest_select = document.getElementById('tipo_destino');
+    destino_select = document.getElementById('destino');
+
+  </script>
+  {% endblock %}
   </body>
 </html>
