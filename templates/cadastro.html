@@ -24,7 +24,7 @@
       <br>
       <br>
       <br>
-      <form class="form form-horizontal" method="POST" role="form" action="/">
+      <form class="form form-horizontal" method="POST" role="form">
         {{ form.csrf_token }}
 
           <div class="row justify-content-start">
@@ -82,8 +82,22 @@
 
     </div>
   <script>
-    tipo_dest_select = document.getElementById('tipo_destino');
-    destino_select = document.getElementById('destino');
+  tipodestino_select = document.getElementById('solicitante');
+  destino_select = document.getElementById('destino');
+
+  tipodestino_select.onchange = function(){
+    solicitante= tipodestino_select.value;
+    <!-- alert(solicitante); -->
+    fetch('/destino/' + solicitante).then(function(response){
+      response.json().then(function(data) {
+        optionHTML = '';
+        for (destino of data.destinos) {
+          optionHTML += '<option value="' + destino.id + '">' + destino.name + '</option>'
+        }
+        destino_select.innerHTML = optionHTML;
+      });
+    });
+  }
 
   </script>
   {% endblock %}

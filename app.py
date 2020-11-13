@@ -1,5 +1,5 @@
 from flask_login import LoginManager, login_user, logout_user
-from flask import Flask, request, redirect, render_template, Response, json, abort
+from flask import Flask, request, redirect, render_template, Response, json, abort, jsonify
 from config import app_config, app_active
 from controller.User import UserController
 from admin.Admin import start_views
@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from functools import wraps
 from controller.Documents import DocumentController
 from model.Department import Department
+from controller.Department import DepartmentController
 from wtforms_sqlalchemy.fields import QuerySelectField
 from model.Types_reg import TypesReg
 from static.cadastro import FormCadastro
@@ -86,16 +87,23 @@ def create_app(config_name):
 
         return render_template('cadastro.html', form=form)
 
-    @app.route('/destino/<get_destino>')
+    @app.route('/destino/<get_destino>', methods=['GET'])
     def destino_opcoes(get_destino):
-        if FormCadastro.tipo_destino == 'Interno':
-            dest = Department.query.filter_by(tipo_destino_id=get_destino)
+        destinos = Department.query.filter_by(tipo=get_destino).all()
 
-    @app.route('/registro/')
-    def registro():
-        return render_template('registro.html')
+        destinos_conj = []
 
-    @app.route('/registro', methods=['POST', 'GET'])
+        for destino in destinos:
+            destinobj = {}
+            destinobj['id'] = destino.id
+            destinobj['name'] = destino.name
+            destinobj['tipo'] = destino.tipo
+            destinobj['description'] = destino.description
+            destinos_conj.append(destinobj)
+
+        return jsonify({'destinos': destinos_conj})
+
+    @app.route('/documents', methods=['POST', 'GET'])
     def save_documents():
         document = DocumentController
 
@@ -197,7 +205,3 @@ def create_app(config_name):
         return user.get_admin_login(user_id)
 
     return app
-
-"""
-Boa prática é definir o nome do pacote do app FLASK, __name__ não é uma boa prática.
-"""

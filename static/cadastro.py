@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
+from flask import request
+from flask_sqlalchemy import SQLAlchemy
 from model.Types_reg import TypesReg
 from model.Department import Department
-from flask_sqlalchemy import SQLAlchemy
+from model.Department import *
 from wtforms import validators
 from wtforms.fields import (
     StringField, RadioField,
@@ -17,16 +19,7 @@ def escolha_tipo():
 
 
 def escolha_setor_a():
-    return Department.query
-
-
-def escolha_setor_b():
-    if FormCadastro.tipo_destino == "Interno":
-        return Department.query
-    elif FormCadastro.tipo_destino == 'Externo':
-        return "2"
-    else:
-        return "3"
+    return Department.query.filter(Department.tipo == 1).all()
 
 
 class FormCadastro(FlaskForm):
@@ -34,14 +27,10 @@ class FormCadastro(FlaskForm):
     tipo_reg = QuerySelectField('Tipo de Documento', query_factory=escolha_tipo, allow_blank=True, get_label='name')
     objeto = TextAreaField('Objeto')
     origem = QuerySelectField('Origem', query_factory=escolha_setor_a, allow_blank=True, get_label='name')
-    tipo_destino = RadioField('Tipo de destino', choices=[('Interno', 'Interno'), ('Externo', 'Externo')])
-    destino = SelectField('Destino')
+    tipo_destino = RadioField('Tipo de destino', choices=[('1', 'Interno'), ('2', 'Externo')], coerce=int,
+                              id='RadioTipoDestino')
+    destino = SelectField('Destino', choices=[])
     date_criacao = DateTimeField('Data de Criação')
-    solicitante = SelectField('Solicitante')
+    solicitante = SelectField('Solicitante', choices=[('0', ''), ('1', 'Interno'), ('2', 'Externo')], coerce=int)
     criador = StringField('Criado por:')
     botao1 = SubmitField('Salvar')
-
-    def hab_dest(self):
-        if FormCadastro.tipo_destino is not 'Interno' or 'Externo':
-            return FormCadastro.destino(disable=True)
-

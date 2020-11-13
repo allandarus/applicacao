@@ -14,3 +14,26 @@ class Department(db.Model):
 
     def __repr__(self):
         return self.name
+
+    def get_all_department(self, limit):
+        try:
+            if limit is None:
+                res = db.session.query(Department).all()
+            else:
+                res = db.session.query(Department).order_by(Department.date_created).limit(limit).all()
+        except Exception as e:
+            res = []
+            print(e)
+        finally:
+            db.session.close()
+        return res
+
+    def get_department_by_tipo(self):
+        try:
+            res = db.session.query(Department).filter(Department.tipo == self.tipo).first()
+        except Exception as e:
+            res = None
+            print(e)
+        finally:
+            db.session.close()
+        return res
