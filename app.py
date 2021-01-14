@@ -1,16 +1,19 @@
 from flask_login import LoginManager, login_user, logout_user
-from flask import Flask, request, redirect, render_template, Response, json, abort, jsonify
+from flask import Flask, request, redirect, render_template, Response, json, abort, jsonify, url_for, session
 from config import app_config, app_active
 from controller.User import UserController
 from admin.Admin import start_views
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from flask_wtf import FlaskForm
 from functools import wraps
 from controller.Documents import DocumentController
+from model.Documents import Documents
 from model.Department import Department
 from controller.Department import DepartmentController
 from wtforms_sqlalchemy.fields import QuerySelectField
 from model.Types_reg import TypesReg
+from datetime import datetime
 from static.cadastro import FormCadastro
 from flask_bootstrap import Bootstrap
 
@@ -81,9 +84,14 @@ def create_app(config_name):
     @app.route('/cadastro/', methods=['GET', 'POST'])
     def cadastro_salvar():
         form = FormCadastro()
+        documents = DocumentController()
+
+        # rows = session.query(documents.tipo).count()
+        current_year = datetime.year
 
         if request.method == 'POST' and form.validate():
-            return 'OK'
+
+            return redirect(url_for('registro.html'))
 
         return render_template('cadastro.html', form=form)
 

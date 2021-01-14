@@ -33,41 +33,39 @@
           </div>
         <div class="row justify-content-start">
           <div class="form-group row">
-            {{ form.tipo_reg.label(class="col-md-4 mb-3 col-form-label") }}
-            {{ form.tipo_reg(class="form-control col-md-8 mb-3") }}
+            {{ form.tipo_reg.label(class="col-md-5 mb-3 col-form-label") }}
+            {{ form.tipo_reg(class="form-control col-md-7 mb-3") }}
           </div>
           <div class="form-group row">
-            {{ form.solicitante.label(class="col-md-4 mb-3col-form-label") }}
-            {{ form.solicitante(class="form-control col-md-8 mb-3") }}
+            {{ form.branco.label(class="col-md-2 mb-3 col-form-label") }}
+            {{ form.solicitante.label(class="col-md-3 mb-3 col-form-label") }}
+            {{ form.solicitante(class="form-control col-md-7 mb-3") }}
           </div>
         </div>
         <div class="row justify-content-start">
           <div class="form-group row">
-            {{ form.origem.label(class="col-md-4 mb-3 col-form-label") }}
-            {{ form.origem(class="form-control col-md-8 mb-3") }}
+            {{ form.origem.label(class="col-md-5 mb-3 col-form-label") }}
+            {{ form.origem(class="form-control col-md-7 mb-3") }}
           </div>
           <div class="form-group row">
 
           </div>
         </div>
         <div class="row justify-content-start">
-          <div class="form-group row align-items-center">
-            {{ form.tipo_destino.label(class="col-md-4 mb-3 col-form-label") }}
-            {% for subfield in form.tipo_destino %}
-                <tr>
-                    <td>{{ subfield(class="form-check-inline col-auto mb-3") }}</td>
-                    <td>{{ subfield.label(class="col-form-label col-auto mb-3") }}</td>
-                </tr>
-            {% endfor %}
+          <div class="form-group row">
+            {{ form.tipo_destino.label(class="col-md-5 mb-3 col-form-label") }}
+            {{ form.tipo_destino(class="form-control col-md-7 mb-3") }}
           </div>
           <div class="form-group row">
-            {{ form.destino.label(class="col-md-4 mb-3 col-form-label") }}
-            {{ form.destino(class="form-control col-md-8 mb-3") }}
+            {{ form.branco.label(class="col-md-2 mb-3 col-form-label") }}
+            {{ form.destino.label(class="col-md-3 mb-3 col-form-label") }}
+            {{ form.destino(class="form-control col-md-7 mb-3") }}
           </div>
         </div>
         <div class="row justify-content-start">
-          {{ form.objeto.label(class="col-md-2 mb-2 col-form-label") }}
-          {{ form.objeto(class="form-control col-md mb-8", type="text") }}
+            {{ form.objeto.label(class="col-md-1 mb-3 col-form-label") }}
+            {{ form.branco.label(class="col-md-1 mb-3 col-form-label") }}
+            {{ form.objeto(class="form-control col-md-10 mb-8", type="text") }}       
         </div>
         <br>
         <div class="row justify-content-end">
@@ -82,13 +80,12 @@
 
     </div>
   <script>
-  tipodestino_select = document.getElementById('solicitante');
+  tipodestino_select = document.getElementById('tipo_destino');
   destino_select = document.getElementById('destino');
 
   tipodestino_select.onchange = function(){
-    solicitante= tipodestino_select.value;
-    <!-- alert(solicitante); -->
-    fetch('/destino/' + solicitante).then(function(response){
+    tipo_destino= tipodestino_select.value;
+    fetch('/destino/' + tipo_destino).then(function(response){
       response.json().then(function(data) {
         optionHTML = '';
         for (destino of data.destinos) {
