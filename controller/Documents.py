@@ -11,12 +11,12 @@ class DocumentController:
         self.document_model.num_reg = obj['num_reg']
         self.document_model.objeto = obj['objeto']
         self.document_model.origen = obj['origen']
-        self.document_model.destiny = obj['destino']
+        self.document_model.destiny = obj['destiny']
         self.document_model.date_created = datetime.now()
         self.document_model.status = 1
         self.document_model.requester = obj['requester']
-        self.document_model.creator = obj['creator']
-        self.document_model.type = obj['type']
+        self.document_model.creator = obj['criador']
+        self.document_model.type = obj['tipo']
         return self.document_model.save()
 
     def update_document(self, obj):

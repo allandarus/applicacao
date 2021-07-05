@@ -5,6 +5,7 @@ from wtforms.fields.simple import HiddenField
 from model.Types_reg import TypesReg
 from model.Department import Department
 from model.Department import *
+from model.User import User
 from wtforms.validators import InputRequired, ValidationError
 from wtforms.fields import (StringField, RadioField, SelectField, SubmitField, 
 DateTimeField, TextAreaField, HiddenField)
@@ -17,6 +18,10 @@ def escolha_tipo():
 
 def escolha_setor_a():
     return Department.query.filter(Department.tipo == 1).all()
+
+
+def escolha_user():
+    return User.query
 
 
 class Length(object):
@@ -36,19 +41,28 @@ class Length(object):
 length = Length
 
 
+class NonValidatingSelectField(SelectField):
+    def pre_validate(self, form):
+        pass
+
+
 class FormCadastro(FlaskForm):
     num_reg = StringField('Número de Registro')
-    tipo_reg = QuerySelectField('Tipo de Documento', query_factory=escolha_tipo, allow_blank=True, get_label='name')
-    objeto = TextAreaField('Objeto', validators=[InputRequired(), length(max=2000)])
-    origem = QuerySelectField('Origem', query_factory=escolha_setor_a, allow_blank=True, get_label='name')
+    tipo_reg = QuerySelectField('Tipo de Documento', query_factory=escolha_tipo,
+     allow_blank=True, get_label='name')
+    objeto = TextAreaField('Objeto', validators=[InputRequired(),
+     length(max=2000)])
+    origem = QuerySelectField('Origem', query_factory=escolha_setor_a,
+     allow_blank=True, get_label='name')
     tipo_destino = SelectField(
         'Tipo de Destino',
-        choices=[('0', ''), ('1', 'Interno'), ('2', 'Externo - Fornecedores'), ('3', 'Externo - Orgão Governo')],
+        choices=[('0', ''), ('1', 'Interno'), ('2', 'Externo - Fornecedores'),
+         ('3', 'Externo - Orgão Governo')],
         coerce=int
     )
-    destino = SelectField('Destino', choices=[], coerce=int)
+    destino = NonValidatingSelectField('Destino', choices=[], coerce=int)
     date_criacao = DateTimeField('Data de Criação')
-    solicitante = SelectField('Interessado', choices=[('1', 'User 1'), ('2', 'User 2')])
+    solicitante = QuerySelectField('Interessado', query_factory=escolha_user)
     criador = StringField('Criado por:')
     botao1 = SubmitField('Salvar')
     branco = HiddenField('')

@@ -1,5 +1,6 @@
+from flask.helpers import flash
 from flask_login import LoginManager, login_user, logout_user
-from flask import Flask, request, redirect, render_template, Response, json, abort, jsonify, url_for, session
+from flask import Flask, request, redirect, render_template, Response, json, jsonify, url_for, session, flash
 from config import app_config, app_active
 from controller.User import UserController
 from admin.Admin import start_views
@@ -84,14 +85,22 @@ def create_app(config_name):
     @app.route('/cadastro/', methods=['GET', 'POST'])
     def cadastro_salvar():
         form = FormCadastro()
-        documents = DocumentController()
+        documents = Documents()
 
         # rows = session.query(documents.tipo).count()
         current_year = datetime.year
 
-        if request.method == 'POST' and form.validate():
+        if form.validate_on_submit():
+            doc = Documents(num_reg = form.num_reg.data,
+             objeto = form.objeto.data, origen = form.origem.data,
+             destiny = form.destino.data, date_created = form.date_criacao.data,
+             requester = form.solicitante.data, creator = form.criador.data,
+             type = form.tipo_destino.data)
+            db.session.add(doc)
+            db.session.commit()
+            flash('Sucesso ao gravar')
 
-            return redirect(url_for('registro.html'))
+            return render_template('base.html')
 
         return render_template('cadastro.html', form=form)
 

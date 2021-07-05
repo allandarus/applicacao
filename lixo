@@ -44,3 +44,15 @@ tipodestino_select = document.getElementById('solicitante');
       });
     });
   }
+
+
+if request.method == 'POST' and form.validate():
+            doc = documents (
+            num_reg = Documents.query.filter_by(id=form.num_reg.data)
+            objeto = Documents.query.filter_by(id=form.objeto.data)
+            origen = Documents.query.filter_by(id=form.origem.data)
+            destiny = Documents.query.filter_by(id=form.destino.data)
+            date_created = Documents.query.filter_by(id=form.date_criacao.data)
+            requester = Documents.query.filter_by(id=form.solicitante.data)
+            creator = Documents.query.filter_by(id=form.criador.data)
+            type = Documents.query.filter_by(id=form.tipo_destino.data)
