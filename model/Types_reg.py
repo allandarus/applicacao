@@ -1,6 +1,8 @@
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
+from migrate import Documents
 from config import app_config,	app_active
 from model.User import User
 
@@ -13,6 +15,7 @@ class TypesReg(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(20), unique=True, nullable=False)
 	description = db.Column(db.String(60), nullable=True)
+	# docs = relationship(Documents)
 
 	def __repr__(self):
 		return self.name

@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from migrate import Documents
 from config import app_config, app_active
 
 config = app_config[app_active]

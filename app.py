@@ -84,18 +84,27 @@ def create_app(config_name):
 
     @app.route('/cadastro/', methods=['GET', 'POST'])
     def cadastro_salvar():
+        """
+        Modificar o type=form.tipo_destino.data para form.tipo_reg.data, fazer
+            com que seja gravado o ID do tipo de documento. - OK
+        Retirar do campo num_reg no banco a propriedade unique. -OK
+        Verificar por que a mensagem em flash aparece somente no ADMIN
+        """
         form = FormCadastro()
         documents = Documents()
-
-        # rows = session.query(documents.tipo).count()
-        current_year = datetime.year
+        current_year = datetime.now()
+        now = current_year.strftime("%Y")
+        tipo = form.tipo_destino.data
+        num = Documents.query.filter_by(type=tipo).count() + 1
+        new_num = str(num).zfill(3)
+        new_num1 = new_num + '/' + now
 
         if form.validate_on_submit():
-            doc = Documents(num_reg = form.num_reg.data,
+            doc = Documents(num_reg = new_num1, 
              objeto = form.objeto.data, origen = form.origem.data,
              destiny = form.destino.data, date_created = form.date_criacao.data,
              requester = form.solicitante.data, creator = form.criador.data,
-             type = form.tipo_destino.data)
+             type = form.tipo_reg.data)
             db.session.add(doc)
             db.session.commit()
             flash('Sucesso ao gravar')

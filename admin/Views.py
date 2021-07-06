@@ -90,20 +90,20 @@ class DocumentsView(ModelView):
         'num_reg': 'Nº de Registro',
         'objeto': 'Objeto',
         'origen': 'Origem',
-        'destiny': 'Destino',
         'date_created': 'Data de Criação',
         'criador': 'Solicitante',
-        'creator': 'Criado por'
+        'creator': 'Criado por',
+        'destiny': 'Destino'
     }
 
     column_descriptions = {
         'num_reg': 'Número gerado pelo sistema do arquivo',
         'objeto': 'Breve descrição do conteúdo do documento',
         'origen': 'Setor de origem do documento que foi gerado',
-        'destiny': 'Destino do documento',
         'data_created': 'Data de Criação',
         'requester': 'Usuário solicitante',
-        'creator': 'Usuário que registrou o documento no sistema'
+        'creator': 'Usuário que registrou o documento no sistema',
+        'destiny': 'Destino do documento',
     }
 
     can_set_page_size = True

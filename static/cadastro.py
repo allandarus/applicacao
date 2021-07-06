@@ -1,3 +1,4 @@
+from os import name
 from flask_wtf import FlaskForm
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
@@ -49,7 +50,7 @@ class NonValidatingSelectField(SelectField):
 class FormCadastro(FlaskForm):
     num_reg = StringField('Número de Registro')
     tipo_reg = QuerySelectField('Tipo de Documento', query_factory=escolha_tipo,
-     allow_blank=True, get_label='name')
+     allow_blank=True, get_pk=lambda x: TypesReg.id)
     objeto = TextAreaField('Objeto', validators=[InputRequired(),
      length(max=2000)])
     origem = QuerySelectField('Origem', query_factory=escolha_setor_a,
@@ -60,9 +61,10 @@ class FormCadastro(FlaskForm):
          ('3', 'Externo - Orgão Governo')],
         coerce=int
     )
-    destino = NonValidatingSelectField('Destino', choices=[], coerce=int)
+    destino = NonValidatingSelectField('Destino', choices=[])
     date_criacao = DateTimeField('Data de Criação')
-    solicitante = QuerySelectField('Interessado', query_factory=escolha_user)
+    solicitante = QuerySelectField('Interessado', query_factory=escolha_user,
+     allow_blank=True)
     criador = StringField('Criado por:')
     botao1 = SubmitField('Salvar')
     branco = HiddenField('')

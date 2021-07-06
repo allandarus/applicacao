@@ -4,7 +4,7 @@ from sqlalchemy import func
 from config import app_active, app_config
 from model.User import User
 from model.Types_reg import TypesReg
-from model.Cargo import Cargo
+from model.Department import Department
 
 
 config = app_config[app_active]
@@ -14,10 +14,9 @@ db = SQLAlchemy(config.APP)
 
 class Documents(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    num_reg = db.Column(db.String(9), unique=True, nullable=False)
+    num_reg = db.Column(db.String(9), nullable=False)
     objeto = db.Column(db.String(120), nullable=True)
     origen = db.Column(db.String(20), nullable=False)
-    destiny = db.Column(db.String(20), nullable=False)
     date_created = db.Column(db.DateTime(6),
      default=db.func.current_timestamp(), nullable=False)
     requester = db.Column(db.String(40), db.ForeignKey(User.username),
@@ -26,6 +25,8 @@ class Documents(db.Model):
     type = db.Column(db.Integer, db.ForeignKey(TypesReg.id), nullable=False)
     tipo = relationship(TypesReg)
     criador = relationship(User)
+    destiny = db.Column(db.Integer, db.ForeignKey(Department.id))
+    destino = relationship(Department)
 
     def get_all(self, limit):
         try:

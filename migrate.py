@@ -41,23 +41,23 @@ class TypesReg(db.Model):
     description = db.Column(db.String(100), nullable=True)
 
 
-class Documents(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    num_reg = db.Column(db.String(9), unique=True, nullable=False)
-    objeto = db.Column(db.String(120), nullable=True)
-    origen = db.Column(db.String(20), nullable=False)
-    destiny = db.Column(db.String(20), nullable=False)
-    date_created = db.Column(db.DateTime(6), default=db.func.current_timestamp(), nullable=False)
-    requester = db.Column(db.String(40), db.ForeignKey(User.username), nullable=False)
-    creator = db.Column(db.String(20), nullable=False)
-    type = db.Column(db.Integer, db.ForeignKey(TypesReg.id), nullable=False)
-
-
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), unique=True, nullable=True)
     tipo = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String(100), nullable=True)
+
+
+class Documents(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    num_reg = db.Column(db.String(9), nullable=False)
+    objeto = db.Column(db.String(120), nullable=True)
+    origen = db.Column(db.String(20), nullable=False)
+    date_created = db.Column(db.DateTime(6), default=db.func.current_timestamp(), nullable=False)
+    requester = db.Column(db.String(40), db.ForeignKey(User.username), nullable=False)
+    creator = db.Column(db.String(20), nullable=False)
+    type = db.Column(db.Integer, db.ForeignKey(TypesReg.id), nullable=False)
+    destiny = db.Column(db.Integer, db.ForeignKey(Department.id))
 
 
 if __name__ == '__main__':
