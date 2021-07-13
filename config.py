@@ -9,7 +9,7 @@ class Config(object):
     TEMPLATE_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     APP = None
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:hmetal85@localhost:3306/livro_flask'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root:vampiro85@localhost:3306/regdoc'
     SENGRID_API_KEY = 'API_KEY'
 
 
