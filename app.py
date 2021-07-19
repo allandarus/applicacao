@@ -4,18 +4,18 @@ from flask import Flask, request, redirect, render_template, Response, json, jso
 from config import app_config, app_active
 from controller.User import UserController
 from admin.Admin import start_views
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, functools
 from sqlalchemy import func
 from flask_wtf import FlaskForm
 from functools import wraps
 from controller.Documents import DocumentController
-from model.Documents import Documents
+from model.Documents import Documents, get_count
 from model.Department import Department
 from controller.Department import DepartmentController
 from wtforms_sqlalchemy.fields import QuerySelectField
 from model.Types_reg import TypesReg
 from datetime import datetime
-from static.cadastro import FormCadastro
+from static.cadastro import FormCadastro, cont_reg
 from flask_bootstrap import Bootstrap
 
 config = app_config[app_active]
@@ -85,31 +85,38 @@ def create_app(config_name):
     @app.route('/cadastro/', methods=['GET', 'POST'])
     def cadastro_salvar():
         """
-        Modificar o type=form.tipo_destino.data para form.tipo_reg.data, fazer
-            com que seja gravado o ID do tipo de documento. - OK
-        Retirar do campo num_reg no banco a propriedade unique. -OK
-        Verificar por que a mensagem em flash aparece somente no ADMIN
+        Função para salvar os dados do formulário no banco de dados.
+        Caso envie dados, o sistesma guarda a data atual e o tipo de registro
+        que há no formulário. Em seguida faz uma pesquisa na tabela 'Documents'
+        no banco de dados. Próximo passo aciona a função 'get_count' que se
+        encontra na model Documentos.py e soma mais 1 para ter a número atual
+        incluindo o novo registro. Ao validadr o formulário, ele salva no banco
+        os dados do formulários equivalentes ao campo. O campo 'num_reg', chama
+        a função 'cont_reg', localizada em static/cadastro.py para transformar
+        os dados obtidos e guardados em 'data_created' e 'n_rows' no formato
+        string utilizado como númeração padrão: 00X/aaaa (ex: 001/2021)
         """
         form = FormCadastro()
-        documents = Documents()
-        current_year = datetime.now()
-        now = current_year.strftime("%Y")
-        tipo = form.tipo_destino.data
-        num = Documents.query.filter_by(type=tipo).count() + 1
-        new_num = str(num).zfill(3)
-        new_num1 = new_num + '/' + now
 
-        if form.validate_on_submit():
-            doc = Documents(num_reg = new_num1, 
-             objeto = form.objeto.data, origen = form.origem.data,
-             destiny = form.destino.data, date_created = form.date_criacao.data,
-             requester = form.solicitante.data, creator = form.criador.data,
-             type = form.tipo_reg.data)
-            db.session.add(doc)
-            db.session.commit()
-            flash('Sucesso ao gravar')
+        if request.method == 'POST':
+            date_created = datetime.now()
+            tipo = form.tipo_reg.data.name
+            q = db.session.query(Documents).filter(Documents.type==tipo)
+            n_rows = get_count(q) + 1
 
-            return render_template('base.html')
+            if form.validate_on_submit():
+                doc = Documents(num_reg = cont_reg(date_created, n_rows), 
+                objeto = form.objeto.data, origen = form.origem.data,
+                destiny = form.destino.data, 
+                date_created = form.date_criacao.data,
+                requester = form.solicitante.data, 
+                creator = form.criador.data,
+                type = form.tipo_reg.data)
+                db.session.add(doc)
+                db.session.commit()
+                flash('Sucesso ao gravar')
+
+                return render_template('base.html')
 
         return render_template('cadastro.html', form=form)
 
@@ -165,11 +172,11 @@ def create_app(config_name):
                                    ensure_ascii=False), mimetype='application/json'), response['status'], header
 
     @app.route('/documents/<documents_id>', methods=['GET'])
-    def get_document(documents_id):
+    def get_document(doc_id):
         header = {}
 
         documents = DocumentController()
-        response = documents.get_documents_by_id(documents_id=documents_id)
+        response = documents.get_documents_by_id(documents_id=doc_id)
 
         return Response(json.dumps(response,
                                    ensure_ascii=False), mimetype='application/json'), response['status'], header

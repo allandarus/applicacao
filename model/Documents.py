@@ -5,6 +5,7 @@ from config import app_active, app_config
 from model.User import User
 from model.Types_reg import TypesReg
 from model.Department import Department
+from static.cadastro import FormCadastro as form
 
 
 config = app_config[app_active]
@@ -15,14 +16,14 @@ db = SQLAlchemy(config.APP)
 class Documents(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     num_reg = db.Column(db.String(9), nullable=False)
-    objeto = db.Column(db.String(120), nullable=True)
+    objeto = db.Column(db.String(2000), nullable=True)
     origen = db.Column(db.String(20), nullable=False)
     date_created = db.Column(db.DateTime(6),
      default=db.func.current_timestamp(), nullable=False)
     requester = db.Column(db.String(40), db.ForeignKey(User.username),
      nullable=False)
     creator = db.Column(db.String(20), nullable=False)
-    type = db.Column(db.Integer, db.ForeignKey(TypesReg.id), nullable=False)
+    type = db.Column(db.String(40), db.ForeignKey(TypesReg.name), nullable=False)
     tipo = relationship(TypesReg)
     criador = relationship(User)
     destiny = db.Column(db.Integer, db.ForeignKey(Department.id))
@@ -93,3 +94,21 @@ class Documents(db.Model):
         finally:
             db.session.close()
         return res
+
+    def get_total_documents_by_type(self, tipo):
+        try:
+            res = db.session\
+                .query(Documents).filter(Documents.type == tipo)\
+                    .statement.with_only_columns([func.count()]).order_by(None)\
+                    .scalar()
+        except Exception as e:
+            res = []
+            print(e)
+        finally:
+            db.session.close()
+        return res
+
+def get_count(q):
+    count_q = q.statement.with_only_columns([func.count()]).order_by(None)
+    count = q.session.execute(count_q).scalar()
+    return count
