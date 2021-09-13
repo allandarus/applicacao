@@ -12,9 +12,7 @@ class Department(db.Model):
     name = db.Column(db.String(40), unique=True, nullable=True)
     tipo = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String(100), nullable=True)
-
-    def __repr__(self):
-        return self.name
+    docs = db.relationship('Documents', backref='department')
 
     def get_all_department(self, limit):
         try:
@@ -38,3 +36,6 @@ class Department(db.Model):
         finally:
             db.session.close()
         return res
+
+    def __repr__(self):
+        return self.name
