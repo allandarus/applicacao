@@ -16,11 +16,11 @@ install:
 
 
 init_db:
-	FLASK_APP=delivery/app.py flask create-db
-	FLASK_APP=delivery/app.py flask db upgrade
+	FLASK_APP=app.py flask create-db
+	FLASK_APP=app.py flask db upgrade
 
 test:
-	FLASK_ENV=test pytest tests/ -v --cov=delivery
+	FLASK_ENV=test pytest tests/ -v --cov=applicacao
 
 format:
 	isort **/*.py

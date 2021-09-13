@@ -1,21 +1,24 @@
+from static.filtro import FormFiltro
 from flask.helpers import flash
 from flask_login import LoginManager, login_user, logout_user
-from flask import Flask, request, redirect, render_template, Response, json, jsonify, url_for, session, flash
+from flask import Flask, request, redirect, render_template, Response, json, jsonify, url_for, session, flash, abort
+from werkzeug.utils import html
 from config import app_config, app_active
 from controller.User import UserController
 from admin.Admin import start_views
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, functools
 from sqlalchemy import func
 from flask_wtf import FlaskForm
 from functools import wraps
 from controller.Documents import DocumentController
-from model.Documents import Documents
+from model.Documents import Documents, get_count
 from model.Department import Department
+from model.User import User
 from controller.Department import DepartmentController
 from wtforms_sqlalchemy.fields import QuerySelectField
 from model.Types_reg import TypesReg
 from datetime import datetime
-from static.cadastro import FormCadastro
+from static.cadastro import FormCadastro, cont_reg
 from flask_bootstrap import Bootstrap
 
 config = app_config[app_active]
@@ -37,6 +40,14 @@ def create_app(config_name):
     start_views(app, db)
     Bootstrap(app)
     db.init_app(app)
+
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', \
+            'GET,PUT,POST,DELETE,OPTIONS')
+        return response
 
     @app.route("/")
     def index():
@@ -85,33 +96,67 @@ def create_app(config_name):
     @app.route('/cadastro/', methods=['GET', 'POST'])
     def cadastro_salvar():
         """
-        Modificar o type=form.tipo_destino.data para form.tipo_reg.data, fazer
-            com que seja gravado o ID do tipo de documento. - OK
-        Retirar do campo num_reg no banco a propriedade unique. -OK
-        Verificar por que a mensagem em flash aparece somente no ADMIN
+        Função para salvar os dados do formulário no banco de dados.
+        Caso envie dados, o sistesma guarda a data atual e o tipo de registro
+        que há no formulário. Em seguida faz uma pesquisa na tabela 'Documents'
+        no banco de dados. Próximo passo aciona a função 'get_count' que se
+        encontra na model Documentos.py e soma mais 1 para ter a número atual
+        incluindo o novo registro. Ao validadr o formulário, ele salva no banco
+        os dados do formulários equivalentes ao campo. O campo 'num_reg', chama
+        a função 'cont_reg', localizada em static/cadastro.py para transformar
+        os dados obtidos e guardados em 'data_created' e 'n_rows' no formato
+        string utilizado como númeração padrão: 00X/aaaa (ex: 001/2021)
         """
         form = FormCadastro()
-        documents = Documents()
-        current_year = datetime.now()
-        now = current_year.strftime("%Y")
-        tipo = form.tipo_destino.data
-        num = Documents.query.filter_by(type=tipo).count() + 1
-        new_num = str(num).zfill(3)
-        new_num1 = new_num + '/' + now
 
-        if form.validate_on_submit():
-            doc = Documents(num_reg = new_num1, 
-             objeto = form.objeto.data, origen = form.origem.data,
-             destiny = form.destino.data, date_created = form.date_criacao.data,
-             requester = form.solicitante.data, creator = form.criador.data,
-             type = form.tipo_reg.data)
-            db.session.add(doc)
-            db.session.commit()
-            flash('Sucesso ao gravar')
+        if request.method == 'POST':
+            date_created = datetime.now()
+            tipo = form.tipo_reg.data.name
+            q = db.session.query(Documents).filter(Documents.type==tipo)
+            n_rows = get_count(q) + 1
+            n_reg = cont_reg(date_created, n_rows)
 
-            return render_template('base.html')
+            if form.validate_on_submit():
+                doc = Documents(num_reg = n_reg, 
+                objeto = form.objeto.data, origen = form.origem.data,
+                destiny = form.destino.data, 
+                date_created = form.date_criacao.data,
+                requester = form.solicitante.data, 
+                creator = form.criador.data,
+                type = form.tipo_reg.data)
+                db.session.add(doc)
+                db.session.commit()
+                flash(f'Sucesso ao gravar, seu número de registro é:  {n_reg}')
+
+                return redirect(url_for('.cadastro_salvar'))
 
         return render_template('cadastro.html', form=form)
+
+    @app.route('/pesquisa', methods=['GET'])
+    def pesquisa():
+        user_model = User()
+        typesreg_model = TypesReg()
+        documents_model = Documents()
+
+        users = user_model.get_total_users()
+        typesregs = typesreg_model.get_total_types()
+        documents = documents_model.get_total_documents()
+        # limit = 10
+        # documents_all = documents_model.get_all(limit)
+
+        last_documents = documents_model.get_last_documents()
+
+        return render_template('pesq_um.html', report={
+            'users': 0 if not users else users[0],
+            'typesreg': 0 if not typesregs else typesregs[0],
+            'documents': 0 if not documents else documents[0]
+        }, last_documents=last_documents)
+
+    @app.route('/avancada', methods=['GET'])
+    def pesquisa_avancada():
+        form = FormFiltro()
+
+        return render_template('pesq_dois.html', form=form)
 
     @app.route('/destino/<get_destino>', methods=['GET'])
     def destino_opcoes(get_destino):
@@ -129,21 +174,21 @@ def create_app(config_name):
 
         return jsonify({'destinos': destinos_conj})
 
-    @app.route('/documents', methods=['POST', 'GET'])
-    def save_documents():
-        document = DocumentController
+    # @app.route('/documents', methods=['POST', 'GET'])
+    # def save_documents():
+    #     document = DocumentController()
 
-        result = document.save_document(request.form)
+    #   result = document.save_document(request.form)
 
-        if result:
-            message = 'Editado'
-        else:
-            message = "Não editado"
-        return message
+    #   if result:
+    #       message = 'Editado'
+    #   else:
+    #       message = "Não editado"
+    #   return message
 
     @app.route('/documents', methods=['PUT'])
     def update_documents():
-        document = DocumentController
+        document = DocumentController()
 
         result = document.update_document(request.form)
 
@@ -162,17 +207,47 @@ def create_app(config_name):
         response = documents.get_documents(limit=limit)
 
         return Response(json.dumps(response,
-                                   ensure_ascii=False), mimetype='application/json'), response['status'], header
+                                   ensure_ascii=False),\
+                                    mimetype='application/json'),\
+                                         response['status'], header
 
-    @app.route('/documents/<documents_id>', methods=['GET'])
+    @app.route('/document/<documents_id>', methods=['GET'])
     def get_document(documents_id):
+        """Página igual ao do formulário de cadastro, começa no documento 001/2021
+        Cada campo é preenchido automáticamente com os respectivos dados referente
+        ao número de registro do documento.
+        A tela precisa conter o campo de editar.
+        Esta tela também será a que será apresentada quando for clicado no botão
+        editar na tela de pesquisa
+        """
         header = {}
 
         documents = DocumentController()
         response = documents.get_documents_by_id(documents_id=documents_id)
 
         return Response(json.dumps(response,
-                                   ensure_ascii=False), mimetype='application/json'), response['status'], header
+                                   ensure_ascii=False),\
+                                        mimetype='application/json'),\
+                                             response['status'], header
+
+    @app.route('/document/<reg>', methods=['GET'])
+    def get_doc_reg(reg):
+        """Página igual ao do formulário de cadastro, começa no documento 001/2021
+        Cada campo é preenchido automáticamente com os respectivos dados referente
+        ao número de registro do documento.
+        A tela precisa conter o campo de editar.
+        Esta tela também será a que será apresentada quando for clicado no 
+        botão editar na tela de pesquisa
+        """
+        header = {}
+
+        documents = DocumentController()
+        response = documents.get_documents_by_id(reg=reg)
+
+        return Response(json.dumps(response,
+                                   ensure_ascii=False), \
+                                       mimetype='application/json'),\
+                                            response['status'], header
 
     @app.route('/user/<user_id>', methods=['GET'])
     def get_user_profile(user_id):
@@ -185,7 +260,9 @@ def create_app(config_name):
         response = user.get_user_by_id(user_id=user_id)
 
         return Response(json.dumps(response,
-                                   ensure_ascii=False), mimetype='application/json'), response['status'], header
+                                   ensure_ascii=False), \
+                                       mimetype='application/json'), \
+                                           response['status'], header
 
     @app.route('/login_api/', methods=['POST'])
     def login_api():
@@ -217,12 +294,15 @@ def create_app(config_name):
                 response["message"] = "Login realizado com sucesso"
                 response["result"] = result
 
-        return Response(json.dumps(response, ensure_ascii=False), mimetype='application/json'), code, header
+        return Response(json.dumps(response, ensure_ascii=False), \
+            mimetype='application/json'), code, header
 
     @app.route('/logout')
     def logout_send():
         logout_user()
-        return render_template('login.html', data={'status': 200, 'msg': 'Usuário deslogado com sucesso',
+        return render_template(
+            'login.html', data={
+                'status': 200, 'msg': 'Usuário deslogado com sucesso',
                                                    'type': 3})
 
     @login_manager.user_loader

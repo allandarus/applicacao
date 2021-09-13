@@ -1,7 +1,7 @@
 from model.User import User
 
 from datetime import datetime, timedelta
-import jwt
+import hashlib, base64, json,jwt
 from config import app_config, app_active
 
 config = app_config[app_active]

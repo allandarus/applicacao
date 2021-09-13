@@ -8,12 +8,13 @@
     <title>Document</title>
   </head>
   <body>
-    
+
   {% block content %}
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/">Início</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Cadastro</li>
+      <li class="breadcrumb-item active" aria-current="page">Pesquisa Avançada</li>
+      <li class="breadcrumb-item"></li>
     </ol>
   </nav>
 
@@ -28,7 +29,7 @@
     {% endif %}
   <br><br>
     <div class="container">
-      <h1 class="text-center">Formulário de registro de documentos FESF</h1>
+      <h1 class="text-center">Pesquisa de documentos registrados FESF</h1>
       <br>
       <br>
       <br>
@@ -36,24 +37,24 @@
         {{ form.csrf_token }}
 
           <div class="row justify-content-start">
-            {{ form.num_reg.label(class="col-md-4 mb-3 col-form-label") }}
-            {{ form.num_reg(class="form-control-plaintext col-md-2 mb-3", type='text') }}
+            {{ form.pesq_num.label(class="col-md-4 mb-0 col-form-label") }}
+            {{ form.pesq_num(class="form-control form-control-sm col-md-2 mb-0", type='text') }}
           </div>
         <div class="row justify-content-start">
           <div class="form-group row">
-            {{ form.tipo_reg.label(class="col-md-5 mb-3 col-form-label") }}
-            {{ form.tipo_reg(class="form-control col-md-7 mb-3") }}
+            {{ form.pesq_tipo.label(class="col-md-5 mb-0 col-form-label") }}
+            {{ form.pesq_tipo(class="form-control form-control-sm col-md-7 mb-0") }}
           </div>
           <div class="form-group row">
-            {{ form.branco.label(class="col-md-2 mb-3 col-form-label") }}
-            {{ form.solicitante.label(class="col-md-3 mb-3 col-form-label") }}
-            {{ form.solicitante(class="form-control col-md-7 mb-3") }}
+            {{ form.branco.label(class="col-md-2 mb-0 col-form-label") }}
+            {{ form.pesq_req.label(class="col-md-3 mb-0 col-form-label") }}
+            {{ form.pesq_req(class="form-control form-control-sm col-md-7 mb-0") }}
           </div>
         </div>
         <div class="row justify-content-start">
           <div class="form-group row">
-            {{ form.origem.label(class="col-md-5 mb-3 col-form-label") }}
-            {{ form.origem(class="form-control col-md-7 mb-3") }}
+            {{ form.pesq_orig.label(class="col-md-5 <mb-0></mb-0> col-form-label") }}
+            {{ form.pesq_orig(class="form-control form-control-sm col-md-7 mb-0") }}
           </div>
           <div class="form-group row">
 
@@ -61,19 +62,14 @@
         </div>
         <div class="row justify-content-start">
           <div class="form-group row">
-            {{ form.tipo_destino.label(class="col-md-5 mb-3 col-form-label") }}
-            {{ form.tipo_destino(class="form-control col-md-7 mb-3") }}
+            {{ form.pesq_tipo_dest.label(class="col-md-5 mb-0 col-form-label") }}
+            {{ form.pesq_tipo_dest(class="form-control form-control-sm col-md-7 mb-0") }}
           </div>
           <div class="form-group row">
-            {{ form.branco.label(class="col-md-2 mb-3 col-form-label") }}
-            {{ form.destino.label(class="col-md-3 mb-3 col-form-label") }}
-            {{ form.destino(class="form-control col-md-7 mb-3") }}
-          </div>
-        </div>
-        <div class="row justify-content-start">
-            {{ form.objeto.label(class="col-md-1 mb-3 col-form-label") }}
-            {{ form.branco.label(class="col-md-1 mb-3 col-form-label") }}
-            {{ form.objeto(class="form-control col-md-10 mb-8", type="text") }}       
+            {{ form.branco.label(class="col-md-2 mb-0 col-form-label") }}
+            {{ form.pesq_dest.label(class="col-md-3 mb-0 col-form-label") }}
+            {{ form.pesq_dest(class="form-control form-control-sm col-md-7 mb-0") }}
+          </div>   
         </div>
         <br>
         <div class="row justify-content-end">
@@ -88,8 +84,8 @@
 
     </div>
   <script>
-  tipodestino_select = document.getElementById('tipo_destino');
-  destino_select = document.getElementById('destino');
+  tipodestino_select = document.getElementById('pesq_tipo_dest');
+  destino_select = document.getElementById('pesq_dest');
 
   tipodestino_select.onchange = function(){
     tipo_destino= tipodestino_select.value;

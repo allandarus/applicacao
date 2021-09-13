@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+<head>
+    <meta charset="UTF-8"/>
+    <title>Pesquisa</title>
+</head>
+<body>
+    {% block content %}
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Início</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Pesquisa</a></li>
+      </ol>
+    </nav>
+    <h2 class="text-center mt-4">Últimos documentos registrados</h2>
+    <p></p>
+    <p></p>
+    <p></p>
+    <div class="table-responsive"></div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Número de Registro</th>
+            <th scope="col">Tipo de Documento</th>
+            <th scope="col">Objeto</th>
+            <th scope="col">Origem</th>
+            <th scope="col">Destino</th>
+            <th scope="col">Solicitante</th>
+            <th scope="col">Data de Criação</th>
+          </tr>
+        </thead>
+          <tbody>
+            {% for document in last_documents %}
+              <tr>
+                <td>{{document.id}}</td>
+                <td>{{document.num_reg}}</td>
+                <td>{{document.type}}</td>
+                <td>{{document.objeto}}</td>
+                <td>{{document.origen}}</td>
+                <td>{{document.destiny}}</td>
+                <td>{{document.requester}}</td>
+                <td>{{document.date_created}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+      <div class="row justify-content-end">
+        <p>
+          <a class="btn btn-primary" href="/avancada" role="button">Pesquisa Avançada</a>
+        </p>
+      </div>
+    </div>
+    {% endblock %}
+</body>

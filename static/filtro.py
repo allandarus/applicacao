@@ -48,32 +48,21 @@ class NonValidatingSelectField(SelectField):
         pass
 
 
-class FormCadastro(FlaskForm):
-    num_reg = StringField('Número de Registro')
-    tipo_reg = QuerySelectField('Tipo de Documento', query_factory=escolha_tipo,
+class FormFiltro(FlaskForm):
+    pesq_num = StringField('Número de Registro')
+    pesq_tipo = QuerySelectField('Tipo de Documento', query_factory=escolha_tipo,
      allow_blank=True, get_label='name')
-    objeto = TextAreaField('Objeto', validators=[InputRequired(),
-     length(max=2000)])
-    origem = QuerySelectField('Origem', query_factory=escolha_setor_a,
+    pesq_orig= QuerySelectField('Origem', query_factory=escolha_setor_a,
      allow_blank=True, get_label='name')
-    tipo_destino = SelectField(
+    pesq_tipo_dest = SelectField(
         'Tipo de Destino',
         choices=[('0', ''), ('1', 'Interno'), ('2', 'Externo - Fornecedores'),
          ('3', 'Externo - Orgão Governo')],
         coerce=int
     )
-    destino = NonValidatingSelectField('Destino', choices=[])
-    date_criacao = DateTimeField('Data de Criação')
-    solicitante = QuerySelectField('Interessado', query_factory=escolha_user,
+    pesq_dest = NonValidatingSelectField('Destino', choices=[])
+    pesq_req = QuerySelectField('Interessado', query_factory=escolha_user,
      allow_blank=True)
     criador = StringField('Criado por:')
-    botao1 = SubmitField('Salvar')
+    botao1 = SubmitField('Pesquisar')
     branco = HiddenField('')
-
-
-def cont_reg(date_created, n_rows):
-
-    current_year = date_created
-    year_str = current_year.strftime("%Y")
-    cont_reg = str(n_rows).zfill(3)
-    return f'{cont_reg}/{year_str}'
